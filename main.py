@@ -1,15 +1,16 @@
 import pandas as pd
 import datetime
 import json
-import io
-import numpy as np
+
 
 maxDaysShedule = 60
 shedule_resource = []
 
+# Generate quotes for all days by week masks and time intervals
 def generateRecourceQuote(maxDaysShedule, maskWP, maskWN, duration,timeAvail, timeUnavail, comment):
     dateAvail = []
     dateUnavail = []
+
     startDate = datetime.datetime.now()
     toDate = startDate + datetime.timedelta(days=maxDaysShedule)
     # generate appointment dates
@@ -18,30 +19,34 @@ def generateRecourceQuote(maxDaysShedule, maskWP, maskWN, duration,timeAvail, ti
 
 
     for da in dateAvail:
-        print(da)
+
+        time_quotes = []
+        # print(da)
         for i in timeAvail:
-            genDayQuote(i[0][0], i[1][0], duration, True, '')
+            genDayQuote(i[0][0], i[1][0], duration, True, '', time_quotes)
         if da in dateUnavail:
-            for j in timeUnavail: genDayQuote(j[0][0], j[1][0], 0, False, comment)
+            for j in timeUnavail: genDayQuote(j[0][0], j[1][0], 0, False, comment, time_quotes)
+        #print(time_quotes)
+        shedule_resource_date = {
+            'sheduleDate': da,
+            'time_quotes': time_quotes
+        }
+        shedule_resource.append(shedule_resource_date)
 
-
-def genDayQuote(timeFrom, timeTo, duration, avail, comment):
-    if duration > 0:
+# Generate  time intervals
+def genDayQuote(timeStart, timeEnd, duration, avail, comment , time_quotes):
+    time_slot = {}
+    if avail:
         frqnc = str(duration) + 'min'
-        print(pd.date_range(timeFrom, timeTo, freq=frqnc, closed='left').strftime('%H:%M').tolist())
-    else: print(f'{timeFrom} - {timeTo} - {comment}')
-  #  time_quote = pd.date_range(timeFrom, timeTo, freq=frqnc).strftime('%H:%M').tolist()
-#   shedule_resource.append({'sheduleDate': dayS})
-#   shedule_resource.append({'timeQuotes': time_quote})
+        timeList = pd.date_range(timeStart, timeEnd, freq=frqnc).strftime('%H:%M').tolist()
+        for i in  range(len(timeList)-1):
+            time_slot = {'timeFrom': timeList[i], 'timeTo': timeList[i+1], 'apointment': avail, 'quoteStatus': 'Принимает', 'patients':[]}
+            time_quotes.append(time_slot)
+    else:
+        time_slot = {'timeFrom': timeStart, 'timeTo':timeEnd, 'apointment': avail,'quoteStatus': comment, 'patients': []}
+        time_quotes.append(time_slot)
 
-
-startDate = datetime.datetime.now()
-toDate = startDate + datetime.timedelta(days=62)
-
-# business days list for shedule
-dateRange = pd.bdate_range(startDate, toDate, freq='C', weekmask='1100000', holidays=None)
-dateRangeList = dateRange.strftime("%Y-%m-%dT%H:%M:%S.000Z").tolist()
-
+#   Григорьева Г.Г.Терапевт
 shedule = {
     'resourceId': 1234567,
     'doctorId': 667660,
@@ -54,27 +59,27 @@ shedule = {
     'lpuToTime': '20:00',
     'cabNum': '110'}
 
-
-with open('shedule_new.json', 'w') as f:
-    json_data = json.dumps(shedule)
-    f.write(json_data)
-
-#   Григорьева Г.Г.Терапевт
-maskWP = '1101000'
+maskWP = '1111100'
 maskWN = '1000000'
 timeAvail = [(['10:00'], ['14:00']), (['15:00'], ['20:00'])]
 timeUnavail = [(['14:00'], ['15:00'])]
 comment = 'Врач не работает'
 duration = 30
-generateRecourceQuote(maxDaysShedule, maskWP, maskWN, duration,timeAvail, timeUnavail, comment)
+generateRecourceQuote(maxDaysShedule, maskWP, maskWN, duration, timeAvail, timeUnavail, comment)
 
 #   Константинова-Щедрина А.А.Офтальмолог
 maskWP = '0111110'
-maskWN = '0100000'
+maskWN = '0100010'
 timeAvail = [(['09:00'], ['21:00'])]
-timeUnavail = [(['09:00'], ['21:00'])]
-comment = 'Врач не принимает'
+timeUnavail = [(['09:00'], ['12:00'])]
+comment = 'Доки'
 duration = 30
 generateRecourceQuote(maxDaysShedule, maskWP, maskWN, duration,timeAvail, timeUnavail, comment)
+
+#print(shedule_resource)
+
+with open('shedule_new.json', 'w') as f:
+    json_data = json.dumps(shedule_resource)
+    f.write(json_data)
 
 
