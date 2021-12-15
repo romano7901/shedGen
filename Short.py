@@ -15,8 +15,10 @@ def generateRecourceQuote(maxDaysShedule, maskWP, maskWN, duration,timeAvail, ti
     startDate = datetime.datetime.now()
     toDate = startDate + datetime.timedelta(days=maxDaysShedule)
     # generate appointment dates  2021-10-07T10:00:00+03:00
-    dateAvail = pd.bdate_range(startDate, toDate, freq='C', weekmask=maskWP, holidays=None).strftime("%Y-%m-%dT%H:%M:%S+03:00").tolist()
-    dateUnavail = pd.bdate_range(startDate, toDate, freq='C', weekmask=maskWN, holidays=None).strftime("%Y-%m-%dT%H:%M:%S+03:00").tolist()
+    dateAvail = pd.bdate_range(startDate, toDate, freq='C', weekmask=maskWP, holidays=None)\
+        .strftime("%Y-%m-%dT%H:%M:%S+03:00").tolist()
+    dateUnavail = pd.bdate_range(startDate, toDate, freq='C', weekmask=maskWN, holidays=None)\
+        .strftime("%Y-%m-%dT%H:%M:%S+03:00").tolist()
 
 
     for da in dateAvail:
@@ -37,16 +39,14 @@ def generateRecourceQuote(maxDaysShedule, maskWP, maskWN, duration,timeAvail, ti
 def genDayQuote(timeStart, timeEnd, duration, avail, comment , time_quotes):
     time_slot = {}
     if avail:
-        #frqnc = str(duration) + 'min'
-        #timeList = pd.date_range(timeStart,timeEnd, freq=frqnc).strftime("%Y-%m-%dT%H:%M:%S.000Z").tolist()
-        #for i in  range(len(timeList)-1):
-        #    time_slot = {'timeFrom': timeList[i], 'timeTo': timeList[i+1], 'apointment': avail, 'quoteStatus': 'Принимает', 'patients':[]}
-        #    time_quotes.append(time_slot)
-        time_slot = {'timeFrom': timeStart, 'timeTo':timeEnd, 'apointment': avail,'quoteStatus': 'Принимает', 'patients': []}
+
+        time_slot = {'timeFrom': timeStart, 'timeTo':timeEnd, 'apointment': avail,'quoteStatus': 'Принимает',
+                     'patients': []}
         time_quotes.append(time_slot)
 
     else:
-        time_slot = {'timeFrom': timeStart, 'timeTo':timeEnd, 'apointment': avail,'quoteStatus': comment, 'patients': []}
+        time_slot = {'timeFrom': timeStart, 'timeTo':timeEnd, 'apointment': avail,'quoteStatus': comment,
+                     'patients': []}
         time_quotes.append(time_slot)
 
 #   Григорьева Г.Г.Терапевт
