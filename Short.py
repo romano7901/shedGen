@@ -14,7 +14,7 @@ def generateRecourceQuote(maxDaysShedule, maskWP, maskWN, duration,timeAvail, ti
 
     startDate = datetime.datetime.now()
     toDate = startDate + datetime.timedelta(days=maxDaysShedule)
-    # generate appointment dates
+    # generate appointment dates  2021-10-07T10:00:00+03:00
     dateAvail = pd.bdate_range(startDate, toDate, freq='C', weekmask=maskWP, holidays=None).strftime("%Y-%m-%dT%H:%M:%S+03:00").tolist()
     dateUnavail = pd.bdate_range(startDate, toDate, freq='C', weekmask=maskWN, holidays=None).strftime("%Y-%m-%dT%H:%M:%S+03:00").tolist()
 
@@ -29,10 +29,9 @@ def generateRecourceQuote(maxDaysShedule, maskWP, maskWN, duration,timeAvail, ti
             for j in timeUnavail: genDayQuote(da+' '+j[0][0],da+' '+ j[1][0], 0, False, comment, time_quotes)
         #print(time_quotes)
         shedule_resource_date = {
-            'sheduleDate': da,
-            'timeQuotes': time_quotes
+            'sheduleDate': da
         }
-        shedule_resource.append(shedule_resource_date)
+        shedule_resource.append(da)
 
 # Generate  time intervals
 def genDayQuote(timeStart, timeEnd, duration, avail, comment , time_quotes):
@@ -65,12 +64,7 @@ shedule_resource_main = {
     'doctorName': 'Григорьева Г.Г.',
     'specialityId': 54321,
     'specialityName': 'Терапевт',
-    'lpuId': 56391,
-    'lpuName': 'ГП № 128',
-    'resourceFromTime': '10:00',
-    'resourceToTime': '20:00',
-    'cabNum': '110',
-    'duration': duration,
+
     'sheduleList': shedule_resource}
 shedule_all.append(shedule_resource_main)
 
@@ -89,12 +83,7 @@ shedule_resource_main = {
     'doctorName': 'Сидорова С.С.',
     'specialityId': 54321,
     'specialityName': 'Терапевт',
-    'lpuId': 56391,
-    'lpuName': 'ГП № 128',
-    'resourceFromTime': '08:00',
-    'resourceToTime': '15:00',
-    'cabNum': '120',
-    'duration': duration,
+
     'sheduleList': shedule_resource}
 shedule_all.append(shedule_resource_main)
 
@@ -113,12 +102,7 @@ shedule_resource_main = {
     'doctorName': 'Сидорова С.С.',
     'specialityId': 54321,
     'specialityName': 'Терапевт',
-    'lpuId': 56391,
-    'lpuName': 'ГП № 128',
-    'resourceFromTime': '14:00',
-    'resourceToTime': '18:00',
-    'cabNum': '130',
-    'duration': duration,
+
     'sheduleList': shedule_resource}
 shedule_all.append(shedule_resource_main)
 
@@ -137,12 +121,7 @@ shedule_resource_main = {
     'doctorName': 'Елисеева Е.Е.',
     'specialityId': 55667788,
     'specialityName': 'Офтальмолог',
-    'lpuId': 56391,
-    'lpuName': 'ГП № 128',
-    'resourceFromTime': '08:00',
-    'resourceToTime': '18:00',
-    'cabNum': '140',
-    'duration': duration,
+
     'sheduleList': shedule_resource}
 
 shedule_all.append(shedule_resource_main)
@@ -162,18 +141,13 @@ shedule_resource_main = {
     'doctorName': 'Константинова-Щедрина А.А.',
     'specialityId': 55667788,
     'specialityName': 'Офтальмолог',
-    'lpuId': 56391,
-    'lpuName': 'ГП № 128',
-    'resourceFromTime': '09:00',
-    'resourceToTime': '21:00',
-    'cabNum': '150',
-    'duration': duration,
+
     'sheduleList': shedule_resource}
 
 shedule_all.append(shedule_resource_main)
 
 
-with open('shedule_new.json', 'w', encoding='utf8') as f:
+with open('resource_short.json', 'w', encoding='utf8') as f:
     json_data = json.dumps(shedule_all, ensure_ascii=False)
 
     f.write(json_data)
